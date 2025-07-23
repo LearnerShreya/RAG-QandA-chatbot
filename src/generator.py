@@ -23,18 +23,37 @@ def get_gemini_llm():
     genai.configure(api_key=api_key)
     return genai.GenerativeModel("gemini-1.5-flash")
 
-def generate_answer(llm, question: str, context: List[str]) -> str:
+def generate_answer(llm, question: str, context: list, chat_history: list = None, language: str = "English") -> str:
     """
-    Generates an answer using the LLM, given a question and a list of context strings.
+    Generates an answer using the LLM. If context is empty or weak, uses Gemini's general knowledge; otherwise, uses RAG context. Includes recent chat history for multi-turn memory. Answers in the selected language.
     """
-    system_prompt = (
-        "You are a helpful loan approval assistant. Use the provided context to answer the user's question. "
-        "If the answer is not in the context, say 'I don't know based on the provided information.'"
-    )
-    context_str = "\n\n".join(context)
-    prompt = f"{system_prompt}\n\nContext:\n{context_str}\n\nQuestion: {question}\nAnswer:"
-    response = llm.generate_content(prompt)
-    return response.text.strip()
+    chat_history = chat_history or []
+    # Format chat history as a string
+    history_str = ""
+    if chat_history:
+        history_str = "\n".join([
+            f"User: {q}\nBot: {a}" for q, a in chat_history[-4:]
+        ])
+    context_str = "\n\n".join(context).strip()
+    context_is_weak = not context_str or len(context_str) < 30
+    lang_instruction = f"Please answer in {language}."
+    if context_is_weak:
+        prompt = (
+            f"You are an expert loan advisor. If the provided information is insufficient, "
+            f"use your own knowledge to give the best possible answer. "
+            f"Be specific, friendly, and proactive. {lang_instruction}\n\n"
+            f"Recent chat:\n{history_str}\n\nUser: {question}"
+        )
+        response = llm.generate_content(prompt)
+        return response.text.strip()
+    else:
+        system_prompt = (
+            f"You are a helpful loan approval assistant. Use the provided context and recent conversation to answer the user's question. {lang_instruction} "
+            "If the answer is not in the context, say 'I don't know based on the provided information.'"
+        )
+        prompt = f"{system_prompt}\n\nRecent chat:\n{history_str}\n\nContext:\n{context_str}\n\nUser: {question}\nAnswer:"
+        response = llm.generate_content(prompt)
+        return response.text.strip()
 
 if __name__ == "__main__":
     # Example usage
