@@ -151,8 +151,9 @@ if st.session_state.theme == "dark":
         hr { border: 0; border-top: 1px solid #232b33; margin: 1em 0; }
         </style>
     """, unsafe_allow_html=True)
-st.markdown("""
-    <style>
+else:
+    st.markdown("""
+        <style>
         html, body { background-color: #f5f8fc; font-family: 'Segoe UI', sans-serif; }
         .chat-box {
             background: #ffffff;
@@ -242,8 +243,52 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.title("💬 Smart Loan Q&A Chatbot")
-st.caption("AI-powered assistant for home loan eligibility, approval, rejections, documents, and financial tips")
+if st.session_state.theme == "dark":
+    st.markdown("""
+        <style>
+        .main-title {
+            font-size: 2.3em;
+            font-weight: 800;
+            color: #1e90ff;
+            text-align: center;
+            margin-bottom: 0.1em;
+            letter-spacing: 0.01em;
+            text-shadow: 0 2px 8px #0e76a855;
+        }
+        .main-subtitle {
+            font-size: 1.1em;
+            color: #e0e0e0;
+            text-align: center;
+            margin-bottom: 1.2em;
+            font-weight: 400;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+else:
+    st.markdown("""
+        <style>
+        .main-title {
+            font-size: 2.3em;
+            font-weight: 800;
+            color: #0e276a;
+            text-align: left;
+            margin-bottom: 0.1em;
+            letter-spacing: 0.01em;
+        }
+        .main-subtitle {
+            font-size: 1.1em;
+            color: #333333;
+            text-align: left;
+            margin-bottom: 1.2em;
+            font-weight: 400;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+st.markdown("""
+    <div class="main-title">💬 Smart Loan Q&amp;A Chatbot</div>
+    <div class="main-subtitle">AI-powered assistant for loan eligibility, approval, rejections, documents, and financial tips</div>
+""", unsafe_allow_html=True)
 
 # Welcome message with illustration
 st.markdown("""
