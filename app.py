@@ -571,7 +571,7 @@ if st.session_state.bot_typing:
         llm = get_gemini_llm()
         chat_hist = st.session_state.chat_history[-4:] if len(st.session_state.chat_history) > 1 else []
         
-        answer = generate_answer(llm=llm, query=user_input, context_docs=context, history=chat_hist)
+        answer = generate_answer(llm=llm, question=user_input, context=context, chat_history=chat_hist)
         final_answer = answer.strip() if answer else "I'm not sure based on that input. Could you try rephrasing your question or give more details?"
 
     st.session_state.chat_history[-1] = (user_input, final_answer)
