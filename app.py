@@ -250,15 +250,14 @@ if st.session_state.theme == "dark":
             font-size: 2.3em;
             font-weight: 800;
             color: #1e90ff;
-            text-align: center;
+            text-align: left;
             margin-bottom: 0.1em;
             letter-spacing: 0.01em;
-            text-shadow: 0 2px 8px #0e76a855;
         }
         .main-subtitle {
             font-size: 1.1em;
             color: #e0e0e0;
-            text-align: center;
+            text-align: left;
             margin-bottom: 1.2em;
             font-weight: 400;
         }
