@@ -13,6 +13,19 @@ import os
 import io
 import json
 
+# Add fade-in animation CSS (at the top, global)
+st.markdown("""
+<style>
+.fade-in {
+    animation: fadeIn 0.7s;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+""", unsafe_allow_html=True)
+
 # Load environment variables
 load_dotenv()
 
@@ -100,44 +113,42 @@ up_count = sum(1 for v in st.session_state.feedback.values() if v == "up")
 down_count = sum(1 for v in st.session_state.feedback.values() if v == "down")
 st.sidebar.markdown(f"**Feedback:** 👍 {up_count} &nbsp;&nbsp; 👎 {down_count}")
 
-languages = ["English", "Hindi", "Punjabi"]
-st.session_state.language = st.sidebar.selectbox("🌐 Language", languages, index=languages.index(st.session_state.language))
+languages = [
+    "English", "Hindi", "Bengali", "Telugu", "Marathi", "Tamil", "Urdu", "Gujarati", "Kannada", "Odia", "Malayalam", "Punjabi", "French", "Spanish", "German", "Chinese", "Japanese", "Arabic",
+    "Assamese", "Maithili", "Santali", "Kashmiri", "Nepali", "Konkani", "Sindhi", "Dogri", "Manipuri", "Bodo", "Sanskrit"
+]
+st.session_state.language = st.sidebar.selectbox("🌐 Language", languages, index=languages.index(st.session_state.language) if st.session_state.language in languages else 0)
 
 # ------------------------ MAIN HEADER ------------------------ #
 if st.session_state.theme == "dark":
     st.markdown("""
         <style>
-        html, body { background-color: #181c1f !important; color: #e0e0e0 !important; }
-        .chat-box { background: #23272b !important; color: #e0e0e0 !important; min-height: 80px !important; overflow-y: auto; }
-        .user-msg { background: linear-gradient(90deg, #1e90ff 80%, #0e76a8 100%) !important; color: #fff !important; }
-        .bot-msg { background: #23272b !important; color: #e0e0e0 !important; }
-        .user-avatar { background: linear-gradient(135deg, #1e90ff 60%, #0e76a8 100%) !important; color: #fff !important; }
+        html, body { background-color: #181b20 !important; color: #f5f6fa !important; font-size: 1.08em !important; }
+        .stApp { background: #181b20 !important; }
+        .chat-box { background: #23262b !important; color: #f5f6fa !important; min-height: 80px !important; overflow-y: auto; border: 1px solid #23262b !important; font-size: 1.09em !important; }
+        .user-msg { background: linear-gradient(90deg, #2196f3 80%, #0e76a8 100%) !important; color: #fff !important; box-shadow: 0 2px 8px #0e76a833; font-size: 1.12em !important; }
+        .bot-msg { background: #232b33 !important; color: #f5f6fa !important; box-shadow: 0 2px 8px #0e76a822; font-size: 1.12em !important; }
+        .user-avatar { background: linear-gradient(135deg, #2196f3 60%, #0e76a8 100%) !important; color: #fff !important; }
         .bot-avatar { background: #1e2936 !important; color: #1e90ff !important; }
         .welcome-hero-img { background: #1e2936 !important; color: #1e90ff !important; }
         .welcome-hero-text { color: #1e90ff !important; }
-        .stButton>button { background: #23272b !important; color: #e0e0e0 !important; }
-        .stTextInput>div>div>input { background: #23272b !important; color: #e0e0e0 !important; border: 1px solid #444 !important; }
-        .stTextInput>div>div>div>input { background: #23272b !important; color: #e0e0e0 !important; border: 1px solid #444 !important; }
-        .stExpander { background: #23272b !important; color: #e0e0e0 !important; border: 1px solid #444 !important; }
-        .stExpanderHeader { background: #23272b !important; color: #e0e0e0 !important; }
-        .st-cq { background: #23272b !important; color: #e0e0e0 !important; }
-        .st-cp { background: #23272b !important; color: #e0e0e0 !important; }
-        .st-cq .st-cp { background: #23272b !important; color: #e0e0e0 !important; }
-        .st-cv { background: #23272b !important; color: #e0e0e0 !important; }
-        .st-cw { background: #23272b !important; color: #e0e0e0 !important; }
-        .st-cx { background: #23272b !important; color: #e0e0e0 !important; }
-        .st-cy { background: #23272b !important; color: #e0e0e0 !important; }
-        .st-cz { background: #23272b !important; color: #e0e0e0 !important; }
-        .st-cy .st-cz { background: #23272b !important; color: #e0e0e0 !important; }
-        .st-cv .st-cw { background: #23272b !important; color: #e0e0e0 !important; }
-        .st-cv .st-cx { background: #23272b !important; color: #e0e0e0 !important; }
-        .st-cv .st-cy { background: #23272b !important; color: #e0e0e0 !important; }
-        .st-cv .st-cz { background: #23272b !important; color: #e0e0e0 !important; }
-        .st-cv .st-cy .st-cz { background: #23272b !important; color: #e0e0e0 !important; }
-        .st-cv .st-cw .st-cx { background: #23272b !important; color: #e0e0e0 !important; }
-        .st-cv .st-cw .st-cy { background: #23272b !important; color: #e0e0e0 !important; }
-        .st-cv .st-cw .st-cz { background: #23272b !important; color: #e0e0e0 !important; }
-        .st-cv .st-cw .st-cy .st-cz { background: #23272b !important; color: #e0e0e0 !important; }
+        .stButton>button, .stDownloadButton>button { background: #2196f3 !important; color: #fff !important; border-radius: 8px !important; border: none !important; box-shadow: 0 2px 8px #0e76a822; font-size: 1.08em !important; }
+        .stButton>button:hover, .stDownloadButton>button:hover { background: #0e76a8 !important; color: #fff !important; box-shadow: 0 0 0 2px #2196f3; }
+        .stTextInput>div>div>input, .stTextInput>div>div>div>input { background: #232b33 !important; color: #f5f6fa !important; border: 1.5px solid #2196f3 !important; border-radius: 6px !important; font-size: 1.08em !important; }
+        .stTextInput>div>div>input:focus, .stTextInput>div>div>div>input:focus { outline: 2px solid #2196f3 !important; }
+        .stExpander, .stExpanderHeader { background: #23262b !important; color: #f5f6fa !important; border: 1px solid #2196f3 !important; border-radius: 8px !important; }
+        .stSidebar, .stSidebarContent { background: #20232a !important; color: #f5f6fa !important; }
+        .stSelectbox>div>div>div>div { background: #232b33 !important; color: #f5f6fa !important; }
+        .stSelectbox>div>div>div>div>div { background: #232b33 !important; color: #f5f6fa !important; }
+        .st-cq, .st-cp, .st-cv, .st-cw, .st-cx, .st-cy, .st-cz { background: #232b33 !important; color: #f5f6fa !important; }
+        ::-webkit-scrollbar { width: 8px; background: #181b20; }
+        ::-webkit-scrollbar-thumb { background: #232b33; border-radius: 8px; }
+        ::selection { background: #2196f3; color: #fff; }
+        .stMarkdown, .stMarkdown p, .stMarkdown span, .stMarkdown div { color: #f5f6fa !important; }
+        .stExpanderContent { color: #e0e0e0 !important; }
+        .stCaption, .stCaption span, .stCaption p { color: #b0b3b8 !important; }
+        .stMarkdown .secondary, .stMarkdown .feedback, .stMarkdown .placeholder { color: #b0b3b8 !important; }
+        hr { border: 0; border-top: 1px solid #232b33; margin: 1em 0; }
         </style>
     """, unsafe_allow_html=True)
 st.markdown("""
@@ -256,35 +267,43 @@ with st.expander("💡 Example questions", expanded=False):
 
 # ------------------------ CHAT WINDOW ------------------------ #
 with st.container():
-    st.markdown("<div class='chat-box'>", unsafe_allow_html=True)
-    for idx, (q, a) in enumerate(st.session_state.chat_history):
-        st.markdown(f"<div class='user-msg'><span class='user-avatar'>🧑‍💼</span>{q}</div>", unsafe_allow_html=True)
-        st.markdown(f"<div class='bot-msg'><span class='bot-avatar'>🤖</span>{a}</div>", unsafe_allow_html=True)
-        # Feedback buttons for each bot answer
-        fb_key = f"feedback_{idx}"
-        if idx not in st.session_state.feedback:
-            col1, col2 = st.columns([1, 1])
-            with col1:
-                if st.button("👍", key=fb_key+"_up"):
-                    st.session_state.feedback[idx] = "up"
-            with col2:
-                if st.button("👎", key=fb_key+"_down"):
-                    st.session_state.feedback[idx] = "down"
-        else:
-            fb_val = st.session_state.feedback[idx]
-            st.markdown(f"<span style='color:#0e76a8;font-size:1.1em;'>Feedback: {'👍' if fb_val=='up' else '👎'}</span>", unsafe_allow_html=True)
-        # Context viewer
-        if idx < len(st.session_state.context_history):
-            with st.expander("🔎 Show retrieved context", expanded=False):
-                context_chunks = st.session_state.context_history[idx]
-                if context_chunks:
-                    for i, chunk in enumerate(context_chunks):
-                        st.markdown(f"**Chunk {i+1}:**\n{chunk}")
-                else:
-                    st.markdown("_No context retrieved for this answer._")
-    if st.session_state.bot_typing:
-        st.markdown("<div class='bot-msg typing-msg'><span class='bot-avatar'>🤖</span>Typing...</div>", unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True)
+    if not st.session_state.chat_history and not st.session_state.bot_typing:
+        st.markdown("""
+        <div style='text-align:center; color:#888; margin-top:2em;'>
+            <div style='font-size:3em;'>💬</div>
+            <div style='font-size:1.2em; margin-top:0.5em;'>Start the conversation!<br>Type your question below or use the mic.</div>
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+        st.markdown("<div class='chat-box'>", unsafe_allow_html=True)
+        for idx, (q, a) in enumerate(st.session_state.chat_history):
+            st.markdown(f"<div class='user-msg fade-in'><span class='user-avatar'>🧑‍💼</span>{q}</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='bot-msg fade-in'><span class='bot-avatar'>🤖</span>{a}</div>", unsafe_allow_html=True)
+            # Feedback buttons for each bot answer
+            fb_key = f"feedback_{idx}"
+            if idx not in st.session_state.feedback:
+                col1, col2 = st.columns([1, 1])
+                with col1:
+                    if st.button("👍", key=fb_key+"_up"):
+                        st.session_state.feedback[idx] = "up"
+                with col2:
+                    if st.button("👎", key=fb_key+"_down"):
+                        st.session_state.feedback[idx] = "down"
+            else:
+                fb_val = st.session_state.feedback[idx]
+                st.markdown(f"<span style='color:#0e76a8;font-size:1.1em;'>Feedback: {'👍' if fb_val=='up' else '👎'}</span>", unsafe_allow_html=True)
+            # Context viewer
+            if idx < len(st.session_state.context_history):
+                with st.expander("🔎 Show retrieved context", expanded=False):
+                    context_chunks = st.session_state.context_history[idx]
+                    if context_chunks:
+                        for i, chunk in enumerate(context_chunks):
+                            st.markdown(f"**Chunk {i+1}:**\n{chunk}")
+                    else:
+                        st.markdown("_No context retrieved for this answer._")
+        if st.session_state.bot_typing:
+            st.markdown("<div class='bot-msg typing-msg fade-in'><span class='bot-avatar'>🤖</span>Typing...</div>", unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
 
     # Download chat as TXT
     if st.session_state.chat_history:
