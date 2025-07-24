@@ -123,32 +123,170 @@ st.session_state.language = st.sidebar.selectbox("🌐 Language", languages, ind
 if st.session_state.theme == "dark":
     st.markdown("""
         <style>
-        html, body { background-color: #181b20 !important; color: #f5f6fa !important; font-size: 1.08em !important; }
-        .stApp { background: #181b20 !important; }
-        .chat-box { background: #23262b !important; color: #f5f6fa !important; min-height: 80px !important; overflow-y: auto; border: 1px solid #23262b !important; font-size: 1.09em !important; }
-        .user-msg { background: linear-gradient(90deg, #2196f3 80%, #0e76a8 100%) !important; color: #fff !important; box-shadow: 0 2px 8px #0e76a833; font-size: 1.12em !important; }
-        .bot-msg { background: #232b33 !important; color: #f5f6fa !important; box-shadow: 0 2px 8px #0e76a822; font-size: 1.12em !important; }
-        .user-avatar { background: linear-gradient(135deg, #2196f3 60%, #0e76a8 100%) !important; color: #fff !important; }
-        .bot-avatar { background: #1e2936 !important; color: #1e90ff !important; }
-        .welcome-hero-img { background: #1e2936 !important; color: #1e90ff !important; }
-        .welcome-hero-text { color: #1e90ff !important; }
-        .stButton>button, .stDownloadButton>button { background: #2196f3 !important; color: #fff !important; border-radius: 8px !important; border: none !important; box-shadow: 0 2px 8px #0e76a822; font-size: 1.08em !important; }
-        .stButton>button:hover, .stDownloadButton>button:hover { background: #0e76a8 !important; color: #fff !important; box-shadow: 0 0 0 2px #2196f3; }
-        .stTextInput>div>div>input, .stTextInput>div>div>div>input { background: #232b33 !important; color: #f5f6fa !important; border: 1.5px solid #2196f3 !important; border-radius: 6px !important; font-size: 1.08em !important; }
-        .stTextInput>div>div>input:focus, .stTextInput>div>div>div>input:focus { outline: 2px solid #2196f3 !important; }
-        .stExpander, .stExpanderHeader { background: #23262b !important; color: #f5f6fa !important; border: 1px solid #2196f3 !important; border-radius: 8px !important; }
-        .stSidebar, .stSidebarContent { background: #20232a !important; color: #f5f6fa !important; }
-        .stSelectbox>div>div>div>div { background: #232b33 !important; color: #f5f6fa !important; }
-        .stSelectbox>div>div>div>div>div { background: #232b33 !important; color: #f5f6fa !important; }
-        .st-cq, .st-cp, .st-cv, .st-cw, .st-cx, .st-cy, .st-cz { background: #232b33 !important; color: #f5f6fa !important; }
+        html, body, .stApp, .stSidebar, .stSidebarContent, .stHeader, .st-emotion-cache-1avcm0n {
+            background-color: #181b20 !important; color: #f5f6fa !important; font-size: 1.08em !important;
+        }
+        .stHeader, .st-emotion-cache-1avcm0n { background: #181b20 !important; color: #fff !important; border-bottom: none !important; }
+        .chat-box { background: #23262b !important; color: #fff !important; min-height: 80px !important; overflow-y: auto; border: 1px solid #23262b !important; font-size: 1.09em !important; border-radius: 14px !important; box-shadow: 0 4px 24px #0004; }
+        .user-msg { background: linear-gradient(90deg, #2563eb 80%, #1e90ff 100%); color: #fff !important; box-shadow: 0 2px 8px #2563eb44; font-size: 1.12em !important; border-radius: 12px; }
+        .bot-msg { background: #23262b !important; color: #fff !important; box-shadow: 0 2px 8px #1e90ff22; font-size: 1.12em !important; border-radius: 12px; }
+        .user-avatar { background: linear-gradient(135deg, #2563eb 60%, #1e90ff 100%) !important; color: #fff !important; }
+        .bot-avatar { background: #23262b !important; color: #1e90ff !important; }
+        .welcome-hero-img, .main-title, .main-subtitle, .welcome-hero-text { color: #fff !important; background: transparent !important; box-shadow: none !important; }
+        .main-title .emoji, .main-subtitle .emoji, .welcome-hero-img .emoji { color: #fff !important; }
+        .stSidebar img { background: #fff !important; border-radius: 12px !important; padding: 6px !important; box-shadow: 0 2px 8px #0003; }
+        .stButton>button, .stDownloadButton>button, .stFileUploader .st-bw { background: #23262b !important; color: #fff !important; border-radius: 8px !important; border: 1.5px solid #2563eb !important; box-shadow: 0 2px 8px #1e90ff22; font-size: 1.08em !important; transition: background 0.2s, color 0.2s, border 0.2s; }
+        .stButton>button:hover, .stDownloadButton>button:hover, .stFileUploader .st-bw:hover { background: #2563eb !important; color: #fff !important; border: 1.5px solid #1e90ff !important; }
+        .stTextInput>div>div>input, .stTextInput>div>div>div>input { background: #23262b !important; color: #fff !important; border: 1.5px solid #2563eb !important; border-radius: 8px !important; font-size: 1.08em !important; box-shadow: 0 2px 8px #1e90ff22; }
+        .stTextInput>div>div>input:focus, .stTextInput>div>div>div>input:focus { outline: 2px solid #1e90ff !important; }
+        .stTextInput input::placeholder { color: #b0b3b8 !important; opacity: 1 !important; }
+        .stExpander, .stExpanderHeader { background: #23262b !important; color: #fff !important; border: 1px solid #2563eb !important; border-radius: 10px !important; box-shadow: 0 2px 8px #1e90ff22; }
+        .stSelectbox>div>div>div>div, .stSelectbox>div>div>div>div>div, .stSelectbox label { background: #23262b !important; color: #fff !important; border: none !important; border-radius: 8px !important; }
+        .stSelectbox svg { color: #fff !important; fill: #fff !important; }
+        .st-cq, .st-cp, .st-cv, .st-cw, .st-cx, .st-cy, .st-cz { background: #23262b !important; color: #fff !important; border-radius: 10px !important; }
+        /* File uploader container and text */
+        .stFileUploader, .stFileUploader label, .stFileUploader .css-1mna7ka, .stFileUploader .css-1u2g0t6, .stFileUploader .css-1v0mbdj, .stFileUploader .css-1y4p8pa, .stFileUploader .css-1b1m3c7 {
+            background: #23262b !important; color: #fff !important; border: 1.5px solid #23262b !important; border-radius: 12px !important; box-shadow: 0 2px 8px #1e90ff22;
+        }
+        .stFileUploader label, .stFileUploader div, .stFileUploader p, .stFileUploader span, .stFileUploader .stFileUploaderLabel, .stFileUploader div[role="alert"] {
+            color: #fff !important;
+        }
+        .stFileUploader .css-1mna7ka, .stFileUploader .css-1u2g0t6, .stFileUploader .css-1v0mbdj, .stFileUploader .css-1y4p8pa, .stFileUploader .css-1b1m3c7 {
+            background: #23262b !important; color: #fff !important; border: none !important; border-radius: 12px !important; }
+        .stFileUploader .css-1v0mbdj, .stFileUploader .css-1u2g0t6, .stFileUploader .css-1mna7ka, .stFileUploader .css-1y4p8pa {
+            color: #fff !important;
+        }
+        .stFileUploader .css-1b1m3c7 { color: #fff !important; background: #23262b !important; }
+        .stFileUploader .css-1v0mbdj:hover, .stFileUploader .css-1u2g0t6:hover, .stFileUploader .css-1mna7ka:hover, .stFileUploader .css-1y4p8pa:hover, .stFileUploader .css-1b1m3c7:hover {
+            background: #2563eb !important; color: #fff !important; border: 1.5px solid #1e90ff !important;
+        }
+        .stFileUploader .st-bw { background: #23262b !important; color: #fff !important; border: 1.5px solid #2563eb !important; border-radius: 8px !important; }
+        .stFileUploader .st-bw:hover { background: #2563eb !important; color: #fff !important; border: 1.5px solid #1e90ff !important; }
+        .stToggle label, .stToggle span, .stToggle { color: #fff !important; }
         ::-webkit-scrollbar { width: 8px; background: #181b20; }
-        ::-webkit-scrollbar-thumb { background: #232b33; border-radius: 8px; }
-        ::selection { background: #2196f3; color: #fff; }
-        .stMarkdown, .stMarkdown p, .stMarkdown span, .stMarkdown div { color: #f5f6fa !important; }
-        .stExpanderContent { color: #e0e0e0 !important; }
+        ::-webkit-scrollbar-thumb { background: #23262b; border-radius: 8px; }
+        ::selection { background: #2563eb; color: #fff; }
+        .stMarkdown, .stMarkdown p, .stMarkdown span, .stMarkdown div { color: #fff !important; }
+        .stExpanderContent { color: #fff !important; }
         .stCaption, .stCaption span, .stCaption p { color: #b0b3b8 !important; }
         .stMarkdown .secondary, .stMarkdown .feedback, .stMarkdown .placeholder { color: #b0b3b8 !important; }
-        hr { border: 0; border-top: 1px solid #232b33; margin: 1em 0; }
+        hr { border: 0; border-top: 1px solid #23262b; margin: 1em 0; }
+        .stFileUploader .stFileUploaderLabel {
+            color: #b0b3b8 !important;
+            font-weight: 500 !important;
+        }
+        .stFileUploader small,
+        .stFileUploader .stFileUploaderDetails,
+        .stFileUploader .stMarkdown,
+        .stFileUploader .stFileUploaderLabel + div,
+        .stFileUploader .stFileUploaderLabel + span {
+            color: #b0b3b8 !important;
+            font-size: 0.98em !important;
+        }
+        /* Sidebar collapse/expand icon */
+        [data-testid="collapsedControl"] svg {
+            color: #fff !important;
+            fill: #fff !important;
+            opacity: 1 !important;
+        }
+        /* Sidebar toggle label and emoji */
+        .stSidebar label, .stSidebar span, .stSidebar [data-testid="stSidebarUserContent"] label, .stSidebar [data-testid="stSidebarUserContent"] span {
+            color: #fff !important;
+        }
+        /* File uploader dropzone and text */
+        .stFileUploader, .stFileUploader label, .stFileUploader .stFileUploaderDropzone, .stFileUploader .stFileUploaderLabel, .stFileUploader .stFileUploaderDetails, .stFileUploader .stMarkdown, .stFileUploader small, .stFileUploader div[role="alert"] {
+            background: #23262b !important;
+            color: #fff !important;
+            border: 1.5px solid #23262b !important;
+            border-radius: 12px !important;
+        }
+        .stFileUploader .stFileUploaderLabel, .stFileUploader .stFileUploaderDetails, .stFileUploader .stMarkdown, .stFileUploader small, .stFileUploader div[role="alert"] {
+            color: #b0b3b8 !important;
+        }
+
+        /* File uploader Browse files button */
+        .stFileUploader .st-bw, .stFileUploader button {
+            background: #23262b !important;
+            color: #fff !important;
+            border: 1.5px solid #2563eb !important;
+            border-radius: 8px !important;
+        }
+        .stFileUploader .st-bw:hover, .stFileUploader button:hover {
+            background: #2563eb !important;
+            color: #fff !important;
+            border: 1.5px solid #1e90ff !important;
+        }
+
+        /* Chat submit button (arrow) */
+        .stButton>button, .stDownloadButton>button {
+            background: #23262b !important;
+            color: #fff !important;
+            border-radius: 8px !important;
+            border: 1.5px solid #2563eb !important;
+            box-shadow: 0 2px 8px #1e90ff22;
+            font-size: 1.08em !important;
+            transition: background 0.2s, color 0.2s, border 0.2s;
+        }
+        .stButton>button:hover, .stDownloadButton>button:hover {
+            background: #2563eb !important;
+            color: #fff !important;
+            border: 1.5px solid #1e90ff !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+    st.markdown("""
+        <style>
+        /* File uploader dropzone main area (copied from light mode, dark colors) */
+        .stFileUploader .stFileUploaderDropzone {
+            background: #23262b !important;
+            color: #fff !important;
+            padding: 1.5rem !important;
+            border-radius: 10px !important;
+            box-shadow: 0 3px 10px #0004 !important;
+            min-height: 80px !important;
+            overflow-y: auto !important;
+        }
+        /* Cloud icon in dropzone */
+        .stFileUploader .stFileUploaderDropzone svg {
+            color: #b0b3b8 !important;
+            fill: #b0b3b8 !important;
+            width: 32px !important;
+            height: 32px !important;
+            margin-right: 0.8em !important;
+        }
+        /* Drag and drop text */
+        .stFileUploader .stFileUploaderDropzone div,
+        .stFileUploader .stFileUploaderDropzone label,
+        .stFileUploader .stFileUploaderDropzone span {
+            color: #fff !important;
+            font-weight: 500 !important;
+            font-size: 1.08rem !important;
+            opacity: 1 !important;
+        }
+        /* Help text (Limit 200MB...) */
+        .stFileUploader .stFileUploaderDropzone small,
+        .stFileUploader .stFileUploaderDropzone .stFileUploaderDetails,
+        .stFileUploader .stFileUploaderDropzone .stMarkdown {
+            color: #b0b3b8 !important;
+            font-size: 1.01rem !important;
+            font-weight: 400 !important;
+        }
+        /* Browse files button */
+        .stFileUploader .st-bw, .stFileUploader button {
+            background: #23262b !important;
+            color: #fff !important;
+            border: 1.5px solid #2563eb !important;
+            border-radius: 8px !important;
+            font-size: 1.08em !important;
+            font-weight: 500 !important;
+            padding: 0.6em 1.4em !important;
+            box-shadow: 0 2px 8px #1e90ff22;
+        }
+        .stFileUploader .st-bw:hover, .stFileUploader button:hover {
+            background: #2563eb !important;
+            color: #fff !important;
+            border: 1.5px solid #1e90ff !important;
+        }
         </style>
     """, unsafe_allow_html=True)
 else:
