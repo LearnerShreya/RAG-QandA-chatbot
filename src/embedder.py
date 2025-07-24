@@ -6,7 +6,6 @@ Embeds all text data (CSV + docs) and builds a FAISS index for semantic retrieva
 - Saves FAISS index for later use
 """
 
-from sentence_transformers import SentenceTransformer
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 import os
@@ -14,9 +13,11 @@ from typing import List
 from src.preprocess import load_and_clean_csv, dataframe_to_chunks
 from src.pdf_reader import extract_texts_from_folder
 
+# Move all paths and chunk size to constants
 DATA_CSV = "data/loan_data.csv.csv"  # Update if needed
 DOCS_FOLDER = "docs/"
 FAISS_INDEX_PATH = "embeddings/faiss_index"
+CHUNK_SIZE = 300
 
 
 def get_all_text_chunks() -> List[str]:
@@ -26,13 +27,13 @@ def get_all_text_chunks() -> List[str]:
     # CSV chunks
     df = load_and_clean_csv(DATA_CSV)
     fields = [col for col in df.columns if col != "loan_id"]
-    csv_chunks = dataframe_to_chunks(df, fields)
+    csv_chunks = dataframe_to_chunks(df, fields, max_length=CHUNK_SIZE)
     # Docs chunks
     doc_texts = extract_texts_from_folder(DOCS_FOLDER)
     doc_chunks = []
     for text in doc_texts:
         # Chunk long doc text for embedding
-        doc_chunks.extend([text[i:i+1000] for i in range(0, len(text), 1000)])
+        doc_chunks.extend([text[i:i+CHUNK_SIZE] for i in range(0, len(text), CHUNK_SIZE)])
     return csv_chunks + doc_chunks
 
 
