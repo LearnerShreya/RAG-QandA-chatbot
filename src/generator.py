@@ -39,9 +39,8 @@ def generate_answer(llm, question: str, context: list, chat_history: list = None
     lang_instruction = f"Please answer in {language}."
     if context_is_weak:
         prompt = (
-            f"You are an expert loan advisor. If the provided information is insufficient, "
-            f"use your own knowledge to give the best possible answer. "
-            f"Be specific, friendly, and proactive. {lang_instruction}\n\n"
+            f"You are an expert loan advisor. Even if the provided information is insufficient, always try to answer the user's question using your own knowledge and reasoning. "
+            f"Be specific, friendly, and proactive. If you don't know the exact answer, provide your best possible explanation or general information. {lang_instruction}\n\n"
             f"Recent chat:\n{history_str}\n\nUser: {question}"
         )
         response = llm.generate_content(prompt)
