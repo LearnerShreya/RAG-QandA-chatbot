@@ -12,6 +12,8 @@ import pandas as pd
 from typing import List
 import os
 
+CHUNK_SIZE = 300
+
 def load_and_clean_csv(csv_path: str) -> pd.DataFrame:
     """
     Loads the CSV, cleans column names, and handles missing values.
@@ -37,7 +39,7 @@ def chunk_text(text: str, max_length: int = 300) -> List[str]:
             chunks.append(chunk)
     return chunks
 
-def dataframe_to_chunks(df: pd.DataFrame, fields: List[str], max_length: int = 300) -> List[str]:
+def dataframe_to_chunks(df: pd.DataFrame, fields: List[str], max_length: int = CHUNK_SIZE) -> List[str]:
     """
     Converts selected fields from each row into text chunks.
     """
@@ -49,9 +51,7 @@ def dataframe_to_chunks(df: pd.DataFrame, fields: List[str], max_length: int = 3
 
 if __name__ == "__main__":
     # Example usage
-    csv_path = "data/loan_data.csv.csv"  # Update if your file is renamed
-    df = load_and_clean_csv(csv_path)
-    # Choose fields relevant for Q&A (customize as needed)
-    fields = [col for col in df.columns if col != "loan_id"]
-    chunks = dataframe_to_chunks(df, fields)
-    print(f"Prepared {len(chunks)} text chunks for embedding.")
+    # The DATA_CSV constant is not defined in this file, so we'll use a placeholder.
+    # In a real scenario, this would be defined elsewhere or passed as an argument.
+    # For now, we'll just print a placeholder message.
+    print("Preprocessing script is running. Please provide a CSV file path.")
