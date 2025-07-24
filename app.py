@@ -236,56 +236,59 @@ if st.session_state.theme == "dark":
     """, unsafe_allow_html=True)
     st.markdown("""
         <style>
-        /* File uploader dropzone main area (copied from light mode, dark colors) */
-        .stFileUploader .stFileUploaderDropzone {
-            background: #23262b !important;
-            color: #fff !important;
-            padding: 1.5rem !important;
+        /* File uploader dropzone and button - improved dark mode */
+        .stFileUploaderDropzone {
+            background: #23262b !important; /* dark gray, not black */
+            color: #f5f6fa !important;      /* off-white for high contrast */
+            padding: 1.1rem 1.2rem !important;
             border-radius: 10px !important;
-            box-shadow: 0 3px 10px #0004 !important;
-            min-height: 80px !important;
-            overflow-y: auto !important;
+            box-shadow: 0 2px 8px #0003 !important;
+            min-height: 70px !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 1em !important;
         }
-        /* Cloud icon in dropzone */
-        .stFileUploader .stFileUploaderDropzone svg {
+        .stFileUploaderDropzone svg {
             color: #b0b3b8 !important;
             fill: #b0b3b8 !important;
-            width: 32px !important;
-            height: 32px !important;
-            margin-right: 0.8em !important;
+            width: 28px !important;
+            height: 28px !important;
+            margin-right: 0.7em !important;
         }
-        /* Drag and drop text */
-        .stFileUploader .stFileUploaderDropzone div,
-        .stFileUploader .stFileUploaderDropzone label,
-        .stFileUploader .stFileUploaderDropzone span {
-            color: #fff !important;
+        .stFileUploaderDropzone div,
+        .stFileUploaderDropzone label,
+        .stFileUploaderDropzone span {
+            color: #f5f6fa !important;
             font-weight: 500 !important;
-            font-size: 1.08rem !important;
+            font-size: 1.01rem !important;
             opacity: 1 !important;
         }
-        /* Help text (Limit 200MB...) */
-        .stFileUploader .stFileUploaderDropzone small,
-        .stFileUploader .stFileUploaderDropzone .stFileUploaderDetails,
-        .stFileUploader .stFileUploaderDropzone .stMarkdown {
-            color: #b0b3b8 !important;
-            font-size: 1.01rem !important;
-            font-weight: 400 !important;
+        .stFileUploaderDropzone small,
+        .stFileUploaderDropzone .stFileUploaderDetails,
+        .stFileUploaderDropzone .stMarkdown {
+            background: #fff !important;
+            color: #222 !important;
+            padding: 2px 8px !important;
+            border-radius: 6px !important;
+            display: inline-block !important;
+            font-size: 0.97rem !important;
+            font-weight: 500 !important;
+            margin-top: 0.3em !important;
         }
-        /* Browse files button */
         .stFileUploader .st-bw, .stFileUploader button {
             background: #23262b !important;
-            color: #fff !important;
-            border: 1.5px solid #2563eb !important;
-            border-radius: 8px !important;
-            font-size: 1.08em !important;
+            color: #f5f6fa !important;
+            border: 1.2px solid #2563eb !important;
+            border-radius: 7px !important;
+            font-size: 0.98em !important;
             font-weight: 500 !important;
-            padding: 0.6em 1.4em !important;
-            box-shadow: 0 2px 8px #1e90ff22;
+            padding: 0.38em 1em !important; /* smaller button */
+            box-shadow: 0 1px 4px #1e90ff22;
         }
         .stFileUploader .st-bw:hover, .stFileUploader button:hover {
             background: #2563eb !important;
             color: #fff !important;
-            border: 1.5px solid #1e90ff !important;
+            border: 1.2px solid #1e90ff !important;
         }
         </style>
     """, unsafe_allow_html=True)
@@ -543,17 +546,34 @@ if submitted and user_input:
     st.session_state.context_history.append([])  # Placeholder for context
     st.rerun()
 
-# ------------------------ GENERATE RESPONSE ------------------------ #
+# # ------------------------ GENERATE RESPONSE ------------------------ #
+# if st.session_state.bot_typing:
+#     time.sleep(1.0)
+#     with st.spinner("Generating answer..."):
+#         context = custom_retrieve_top_k(user_input, k=5)
+#         llm = get_gemini_llm()
+#         chat_hist = st.session_state.chat_history[-4:] if len(st.session_state.chat_history) > 1 else []
+#         raw_answer = generate_answer(llm, user_input, context, chat_history=chat_hist, language=st.session_state.language)
+#         final_answer = raw_answer.strip()
+#         if not final_answer or "i don't know" in final_answer.lower():
+#             final_answer = "I'm not sure based on that input. Could you try rephrasing your question or give more details?"
+#     st.session_state.chat_history[-1] = (user_input, final_answer)
+#     st.session_state.context_history[-1] = context
+#     st.session_state.memory.save_context({"input": user_input}, {"output": final_answer})
+#     st.session_state.bot_typing = False
+#     st.rerun()
+
+
 if st.session_state.bot_typing:
     time.sleep(1.0)
     with st.spinner("Generating answer..."):
         context = custom_retrieve_top_k(user_input, k=5)
         llm = get_gemini_llm()
         chat_hist = st.session_state.chat_history[-4:] if len(st.session_state.chat_history) > 1 else []
-        raw_answer = generate_answer(llm, user_input, context, chat_history=chat_hist, language=st.session_state.language)
-        final_answer = raw_answer.strip()
-        if not final_answer or "i don't know" in final_answer.lower():
-            final_answer = "I'm not sure based on that input. Could you try rephrasing your question or give more details?"
+        
+        answer = generate_answer(llm=llm, query=user_input, context_docs=context, history=chat_hist)
+        final_answer = answer.strip() if answer else "I'm not sure based on that input. Could you try rephrasing your question or give more details?"
+
     st.session_state.chat_history[-1] = (user_input, final_answer)
     st.session_state.context_history[-1] = context
     st.session_state.memory.save_context({"input": user_input}, {"output": final_answer})
