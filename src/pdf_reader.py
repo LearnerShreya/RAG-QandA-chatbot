@@ -13,7 +13,7 @@ from typing import List
 def extract_text_from_pdf(pdf_path: str) -> str:
     """
     Extracts all text from a PDF file using PyMuPDF.
-    Returns the concatenated text from all pages.
+    Returns a single concatenated string of all pages.
     """
     if not os.path.exists(pdf_path):
         raise FileNotFoundError(f"File not found: {pdf_path}")
