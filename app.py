@@ -452,11 +452,7 @@ with st.expander("💡 Example questions", expanded=False):
 
 # ------------------------ CHAT WINDOW ------------------------ #
 with st.container():
-    # Only show chat if there is at least one completed Q&A, or the bot is typing
-    completed_chat = [
-        (q, a) for q, a in st.session_state.chat_history if a and a != "..."
-    ]
-    if not completed_chat and not st.session_state.bot_typing:
+    if not st.session_state.chat_history and not st.session_state.bot_typing:
         st.markdown("""
         <div style='text-align:center; color:#888; margin-top:2em;'>
             <div style='font-size:3em;'>💬</div>
@@ -465,8 +461,7 @@ with st.container():
         """, unsafe_allow_html=True)
     else:
         st.markdown("<div class='chat-box'>", unsafe_allow_html=True)
-        # Show completed Q&A
-        for idx, (q, a) in enumerate(completed_chat):
+        for idx, (q, a) in enumerate(st.session_state.chat_history):
             st.markdown(f"<div class='user-msg fade-in'><span class='user-avatar'>🧑‍💼</span>{q}</div>", unsafe_allow_html=True)
             st.markdown(f"<div class='bot-msg fade-in'><span class='bot-avatar'>🤖</span>{a}</div>", unsafe_allow_html=True)
             # Feedback buttons for each bot answer
@@ -491,17 +486,14 @@ with st.container():
                             st.markdown(f"**Chunk {i+1}:**\n{chunk}")
                     else:
                         st.markdown("_No context retrieved for this answer._")
-        # If bot is typing, show the latest user question and typing indicator
-        if st.session_state.bot_typing and st.session_state.chat_history:
-            last_q, last_a = st.session_state.chat_history[-1]
-            st.markdown(f"<div class='user-msg fade-in'><span class='user-avatar'>🧑‍💼</span>{last_q}</div>", unsafe_allow_html=True)
+        if st.session_state.bot_typing:
             st.markdown("<div class='bot-msg typing-msg fade-in'><span class='bot-avatar'>🤖</span>Typing...</div>", unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
     # Download chat as TXT
-    if completed_chat:
+    if st.session_state.chat_history:
         chat_lines = []
-        for q, a in completed_chat:
+        for q, a in st.session_state.chat_history:
             chat_lines.append(f"You: {q}\nBot: {a}\n")
         chat_txt = "\n".join(chat_lines)
         st.download_button(
@@ -554,32 +546,34 @@ if submitted and user_input:
     st.session_state.context_history.append([])  # Placeholder for context
     st.rerun()
 
+# # ------------------------ GENERATE RESPONSE ------------------------ #
+# if st.session_state.bot_typing:
+#     time.sleep(1.0)
+#     with st.spinner("Generating answer..."):
+#         context = custom_retrieve_top_k(user_input, k=5)
+#         llm = get_gemini_llm()
+#         chat_hist = st.session_state.chat_history[-4:] if len(st.session_state.chat_history) > 1 else []
+#         raw_answer = generate_answer(llm, user_input, context, chat_history=chat_hist, language=st.session_state.language)
+#         final_answer = raw_answer.strip()
+#         if not final_answer or "i don't know" in final_answer.lower():
+#             final_answer = "I'm not sure based on that input. Could you try rephrasing your question or give more details?"
+#     st.session_state.chat_history[-1] = (user_input, final_answer)
+#     st.session_state.context_history[-1] = context
+#     st.session_state.memory.save_context({"input": user_input}, {"output": final_answer})
+#     st.session_state.bot_typing = False
+#     st.rerun()
+
+
 if st.session_state.bot_typing:
     time.sleep(1.0)
     with st.spinner("Generating answer..."):
         context = custom_retrieve_top_k(user_input, k=5)
         llm = get_gemini_llm()
         chat_hist = st.session_state.chat_history[-4:] if len(st.session_state.chat_history) > 1 else []
-        # Option C: If the question is about current loan interest rates and no context is found, provide a generic example answer with disclaimer
-        def is_interest_rate_question(q):
-            ql = q.lower()
-            return (
-                ("interest rate" in ql or "interest rates" in ql) and
-                ("loan" in ql or "home loan" in ql or "current" in ql)
-            )
-        if (not context or all(not c.strip() for c in context)) and is_interest_rate_question(user_input):
-            final_answer = (
-                "Home loan interest rates in India typically range from 8% to 10% per annum, but rates vary by bank, loan type, and applicant profile. "
-                "For the most accurate and up-to-date rates, please check with your bank or visit their official website.\n\n"
-                "_Note: This is a generic example and may not reflect the latest rates. The AI does not have access to real-time financial data._"
-            )
-        elif not context or all(not c.strip() for c in context):
-            answer = generate_answer(llm=llm, question=user_input, context=None, chat_history=chat_hist)
-            final_answer = (answer.strip() if answer else "I'm not sure based on that input. Could you try rephrasing your question or give more details?")
-            final_answer += "\n\n_Note: This answer is generated from the AI's general knowledge and may not reflect the most current or specific information._"
-        else:
-            answer = generate_answer(llm=llm, question=user_input, context=context, chat_history=chat_hist)
-            final_answer = answer.strip() if answer else "I'm not sure based on that input. Could you try rephrasing your question or give more details?"
+        
+        answer = generate_answer(llm=llm, query=user_input, context_docs=context, history=chat_hist)
+        final_answer = answer.strip() if answer else "I'm not sure based on that input. Could you try rephrasing your question or give more details?"
+
     st.session_state.chat_history[-1] = (user_input, final_answer)
     st.session_state.context_history[-1] = context
     st.session_state.memory.save_context({"input": user_input}, {"output": final_answer})
