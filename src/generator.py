@@ -4,6 +4,7 @@ generator.py
 Gemini LLM integration for answer generation in the RAG pipeline.
 - Uses official Google GenerativeAI SDK
 - Reads API key from environment variable
+- Enhanced RAG + LLM integration with structured formatting
 """
 
 import os
@@ -34,7 +35,9 @@ def get_gemini_llm():
 
 def generate_answer(llm, question: str, context: list, chat_history: list = None, language: str = "English") -> str:
     """
-    Generates an answer using the LLM. If context is empty or weak, uses Gemini's general knowledge; otherwise, uses RAG context. Includes recent chat history for multi-turn memory. Answers in the selected language.
+    Enhanced RAG + LLM answer generation with structured formatting.
+    Combines retrieved context with LLM's knowledge for concise, 
+    well-structured responses with clear sections and bullet points.
     """
     chat_history = chat_history or []
     history_str = ""
@@ -42,25 +45,60 @@ def generate_answer(llm, question: str, context: list, chat_history: list = None
         history_str = "\n".join([
             f"User: {q}\nBot: {a}" for q, a in chat_history[-4:]
         ])
+    
     context_str = "\n\n".join(context).strip()
     context_is_weak = not context_str or len(context_str) < 30
+    
     lang_instruction = f"Please answer in {language}."
+    
+    # Enhanced RAG + LLM prompt engineering with concise formatting
     if context_is_weak:
+        # Fallback to LLM's general knowledge when RAG context is insufficient
         prompt = (
-            f"You are an expert loan advisor. Even if the provided information is insufficient, always try to answer the user's question using your own knowledge and reasoning. "
-            f"Be specific, friendly, and proactive. If you don't know the exact answer, provide your best possible explanation or general information. {lang_instruction}\n\n"
-            f"Recent chat:\n{history_str}\n\nUser: {question}"
+            f"You are an expert loan advisor. {lang_instruction}\n\n"
+            f"IMPORTANT: Keep responses CONCISE and FOCUSED. Maximum 150-200 words.\n\n"
+            f"FORMATTING REQUIREMENTS:\n"
+            f"1. Use clear headings with ##\n"
+            f"2. Use bullet points (•) for lists\n"
+            f"3. Use bold text (**text**) for emphasis\n"
+            f"4. Keep sections short and to the point\n"
+            f"5. Avoid unnecessary explanations\n\n"
+            f"Recent conversation:\n{history_str}\n\n"
+            f"User Question: {question}\n\n"
+            f"Provide a CONCISE, well-structured response:"
         )
-        response = llm.generate_content(prompt)
-        return response.text.strip()
     else:
-        system_prompt = (
-            f"You are a helpful loan approval assistant. Use the provided context and recent conversation to answer the user's question. {lang_instruction} "
-            "If the answer is not in the context, say 'I don't know based on the provided information.'"
+        # Enhanced RAG + LLM integration with concise formatting
+        prompt = (
+            f"You are a knowledgeable loan assistant. Use the provided context information "
+            f"AND your own expertise to give comprehensive but CONCISE answers. {lang_instruction}\n\n"
+            f"IMPORTANT: Keep responses CONCISE and FOCUSED. Maximum 150-200 words.\n\n"
+            f"FORMATTING REQUIREMENTS:\n"
+            f"1. Use clear headings with ##\n"
+            f"2. Use bullet points (•) for lists\n"
+            f"3. Use bold text (**text**) for emphasis\n"
+            f"4. Keep sections short and to the point\n"
+            f"5. Avoid unnecessary explanations\n"
+            f"6. Focus on the most important information\n\n"
+            f"Retrieved Context:\n{context_str}\n\n"
+            f"Recent conversation:\n{history_str}\n\n"
+            f"User Question: {question}\n\n"
+            f"Instructions:\n"
+            f"1. Use the context information as your primary source\n"
+            f"2. Supplement with your own knowledge if needed\n"
+            f"3. Be specific and concise\n"
+            f"4. Focus on the most relevant information\n"
+            f"5. Keep the response under 200 words\n"
+            f"6. Use clear, structured formatting\n\n"
+            f"Provide a CONCISE, well-structured answer:"
         )
-        prompt = f"{system_prompt}\n\nRecent chat:\n{history_str}\n\nContext:\n{context_str}\n\nUser: {question}\nAnswer:"
+    
+    try:
         response = llm.generate_content(prompt)
         return response.text.strip()
+    except Exception as e:
+        # Fallback response if LLM fails
+        return f"I apologize, but I'm having trouble generating a response right now. Please try again in a moment."
 
 def execute_code_judge0(source_code, language_id, stdin=None):
     """
