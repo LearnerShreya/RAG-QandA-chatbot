@@ -207,4 +207,4 @@ Answer:
 4. **Memory Management**: Intelligent conversation context
 5. **User Experience**: Intuitive interface design
 
-This approach ensures a robust, scalable, and user-friendly chatbot that provides accurate, context-aware responses while maintaining conversational flow and user engagement. 
+I followed this approach to ensures a robust, scalable, and user-friendly chatbot that provides accurate, context-aware responses while maintaining conversational flow and user engagement. 
