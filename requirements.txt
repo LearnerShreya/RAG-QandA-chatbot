@@ -1,6 +1,7 @@
 python-dotenv
 streamlit
 langchain_community
+langchain-huggingface
 faiss-cpu
 sentence-transformers
 PyMuPDF
