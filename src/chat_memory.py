@@ -28,12 +28,4 @@ def reset_memory():
     _memory = None
 
 if __name__ == "__main__":
-    # Example usage
-    mem = get_memory()
-    mem.save_context({"input": "What is a home loan?"}, {"output": "A home loan is a loan taken to buy a house."})
-    mem.save_context({"input": "Is credit history important?"}, {"output": "Yes, it affects loan approval."})
-    print("Chat history:")
-    for msg in mem.chat_memory.messages:
-        print(msg)
-    reset_memory()
-    print("Memory reset. New instance:", get_memory())
+    pass
