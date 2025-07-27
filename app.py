@@ -327,8 +327,25 @@ else:
             margin-right: auto;
             box-shadow: 0 2px 8px rgba(14,118,168,0.06);
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 0.5em;
+            padding: 1rem;
+            border-radius: 10px;
+        }
+        .bot-msg h2, .bot-msg h3 {
+            color: #0e76a8;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .bot-msg ul, .bot-msg ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .bot-msg li {
+            margin-bottom: 0.3rem;
+        }
+        .bot-msg strong {
+            color: #0e76a8;
         }
         .user-avatar, .bot-avatar {
             width: 36px;
@@ -462,7 +479,12 @@ with st.container():
         st.markdown("<div class='chat-box'>", unsafe_allow_html=True)
         for idx, (q, a) in enumerate(st.session_state.chat_history):
             st.markdown(f"<div class='user-msg fade-in'><span class='user-avatar'>🧑‍💼</span>{q}</div>", unsafe_allow_html=True)
-            st.markdown(f"<div class='bot-msg fade-in'><span class='bot-avatar'>🤖</span>{a}</div>", unsafe_allow_html=True)
+            # Display bot response with proper markdown formatting
+            col1, col2 = st.columns([0.1, 0.9])
+            with col1:
+                st.markdown("<div class='bot-avatar'>🤖</div>", unsafe_allow_html=True)
+            with col2:
+                st.markdown(a)
             # Feedback buttons for each bot answer
             fb_key = f"feedback_{idx}"
             if idx not in st.session_state.feedback:
