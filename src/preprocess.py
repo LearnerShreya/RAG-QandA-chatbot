@@ -50,8 +50,4 @@ def dataframe_to_chunks(df: pd.DataFrame, fields: List[str], max_length: int = C
     return all_chunks
 
 if __name__ == "__main__":
-    # Example usage
-    # The DATA_CSV constant is not defined in this file, so we'll use a placeholder.
-    # In a real scenario, this would be defined elsewhere or passed as an argument.
-    # For now, we'll just print a placeholder message.
-    print("Preprocessing script is running. Please provide a CSV file path.")
+    pass
