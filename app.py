@@ -86,7 +86,7 @@ if uploaded_file:
         else:
             new_text = extract_text_from_txt(tmp_path)
 
-        # Set device explicitly to avoid meta tensor issues
+      
         embedding = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2", model_kwargs={'device': 'cpu'})
         if st.session_state.custom_vectorstore is None:
             base_retriever = load_faiss_retriever()
@@ -113,8 +113,7 @@ down_count = sum(1 for v in st.session_state.feedback.values() if v == "down")
 st.sidebar.markdown(f"**Feedback:** 👍 {up_count} &nbsp;&nbsp; 👎 {down_count}")
 
 languages = [
-    "English", "Hindi", "French", "Spanish", "Bengali", "Telugu", "Marathi", "German", "Chinese", "Tamil", "Urdu", "Gujarati", "Kannada", "Odia", "Malayalam", "Punjabi", "Japanese", "Arabic",
-    "Assamese", "Maithili", "Santali", "Kashmiri", "Nepali", "Konkani", "Sindhi", "Dogri", "Manipuri", "Bodo", "Sanskrit"
+    "English", "Hindi", "French", "Spanish", "Bengali", "Telugu", "Marathi", "German", "Chinese", "Tamil", "Urdu", "Gujarati", "Kannada", "Odia", "Malayalam", "Punjabi", "Japanese", "Arabic", "Assamese", "Maithili", "Santali", "Kashmiri", "Nepali", "Konkani", "Sindhi", "Dogri", "Manipuri", "Bodo", "Sanskrit"
 ]
 st.session_state.language = st.sidebar.selectbox("🌐 Language", languages, index=languages.index(st.session_state.language) if st.session_state.language in languages else 0)
 
@@ -519,7 +518,7 @@ with st.container():
         chat_txt = "\n".join(chat_lines)
         st.download_button(
             label="📥 Download Chat as TXT",
-            data=chat_txt,  # Pass string directly
+            data=chat_txt,  
             file_name="loan_chatbot_conversation.txt",
             mime="text/plain"
         )
