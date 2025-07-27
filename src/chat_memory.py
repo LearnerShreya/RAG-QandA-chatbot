@@ -8,7 +8,7 @@ Sets up chat memory for contextual conversations using LangChain.
 
 from langchain.memory import ConversationBufferMemory
 
-# Singleton memory instance (for use in app)
+# Singleton memory instance
 _memory = None
 
 def get_memory(memory_key: str = "chat_history", return_messages: bool = True):
