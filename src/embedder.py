@@ -12,7 +12,6 @@ import os
 import sys
 from typing import List
 
-# Add the parent directory to the path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.preprocess import load_and_clean_csv, dataframe_to_chunks
@@ -43,7 +42,7 @@ def build_and_save_faiss_index(texts: List[str], index_path: str = FAISS_INDEX_P
     """
     Embeds texts and saves a FAISS index to disk.
     """
-    # Set device explicitly to avoid meta tensor issues
+
     embedding = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2", model_kwargs={'device': 'cpu'})
     vectorstore = FAISS.from_texts(texts, embedding=embedding)
     vectorstore.save_local(index_path)
