@@ -6,7 +6,7 @@ Extracts text from PDF and TXT files for downstream embedding.
 - Handles plain text files
 """
 
-import fitz  # PyMuPDF
+import fitz 
 import os
 from typing import List
 
