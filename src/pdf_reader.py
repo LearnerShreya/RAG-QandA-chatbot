@@ -50,10 +50,4 @@ def extract_texts_from_folder(folder_path: str, exts: List[str] = [".pdf", ".txt
     return texts
 
 if __name__ == "__main__":
-    # Example usage
-    pdf_path = "docs/domain_guide.pdf"  # Update as needed
-    txt_path = "docs/notes.txt"         # Update as needed
-    if os.path.exists(pdf_path):
-        print(f"PDF text sample:\n{extract_text_from_pdf(pdf_path)[:500]}\n...")
-    if os.path.exists(txt_path):
-        print(f"TXT text sample:\n{extract_text_from_txt(txt_path)[:500]}\n...")
+    pass
