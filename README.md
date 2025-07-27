@@ -41,7 +41,7 @@ RAG-QandA-chatbot/
 │   ├── Test Dataset.csv
 │   └── Sample_Submission.csv
 ├── docs/                  # Domain knowledge
-│   ├── domain_guide.pdf
+│   ├── comprehensive_loan_guide.txt
 │   └── notes.txt
 ├── embeddings/           # FAISS index storage
 │   ├── index.faiss
@@ -66,6 +66,10 @@ RAG-QandA-chatbot/
 ![Application Screenshot 2](assets/image-1.png)
 ![Application Screenshot 3](assets/image-2.png)
 ![Application Screenshot 4](assets/image-3.png)
+![Application Screenshot 5](assets/image-4.png)
+![Application Screenshot 6](assets/image-5.png)
+![Application Screenshot 7](assets/image-6.png)
+![Application Screenshot 8](assets/image-7.png)
 
 ## Quick Start
 
