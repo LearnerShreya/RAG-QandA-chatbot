@@ -23,7 +23,6 @@ def load_faiss_retriever(index_path: str = FAISS_INDEX_PATH, model_name: str = E
     if not os.path.exists(index_path):
         raise FileNotFoundError(f"FAISS index not found at {index_path}. Please run 'python src/embedder.py' to build the index.")
     
-    # Set device explicitly to avoid meta tensor issues
     embedding = HuggingFaceEmbeddings(model_name=model_name, model_kwargs={'device': 'cpu'})
     vectorstore = FAISS.load_local(index_path, embedding, allow_dangerous_deserialization=True)
     return vectorstore.as_retriever()
