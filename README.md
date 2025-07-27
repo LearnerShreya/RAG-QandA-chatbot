@@ -38,8 +38,6 @@ RAG-QandA-chatbot/
 │   └── chat_memory.py    # Conversation memory
 ├── data/                  # Dataset files
 │   ├── loan_data.csv.csv
-│   ├── Test Dataset.csv
-│   └── Sample_Submission.csv
 ├── docs/                  # Domain knowledge
 │   ├── comprehensive_loan_guide.txt
 │   └── notes.txt
@@ -50,7 +48,7 @@ RAG-QandA-chatbot/
 │   ├── logo.png
 │   ├── image.png
 │   ├── image-1.png
-│   └── image-2.png
+│   └── image-......
 ├── .streamlit/           # Streamlit configuration
 │   └── config.toml
 ├── requirements.txt      # Dependencies
