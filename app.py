@@ -4,7 +4,7 @@ from src.generator import get_gemini_llm, generate_answer
 from src.chat_memory import get_memory, reset_memory
 from src.pdf_reader import extract_text_from_pdf, extract_text_from_txt
 from dotenv import load_dotenv
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 import streamlit.components.v1 as components
 import tempfile
@@ -13,7 +13,7 @@ import os
 import io
 import json
 
-# Add fade-in animation CSS (at the top, global)
+
 st.markdown("""
 <style>
 .fade-in {
@@ -29,7 +29,7 @@ st.markdown("""
 # Load environment variables
 load_dotenv()
 
-st.set_page_config(page_title="Smart Loan Assistant", page_icon="💬", layout="wide")
+st.set_page_config(page_title="Smart Loan Assistant", page_icon="assets/logo.png", layout="wide")
 
 # ------------------------ SESSION SETUP ------------------------ #
 if "chat_history" not in st.session_state:
@@ -52,7 +52,7 @@ if "language" not in st.session_state:
     st.session_state.language = "English"
 
 # ------------------------ SIDEBAR ------------------------ #
-st.sidebar.image("https://cdn-icons-png.flaticon.com/512/681/681494.png", width=100)
+st.sidebar.image("assets/logo.png", width=100)
 st.sidebar.title("💼 Loan Chatbot")
 st.sidebar.write("Ask questions related to loan eligibility, approvals, interest, etc.")
 # Dark mode toggle
@@ -76,24 +76,23 @@ st.sidebar.subheader("📥 Upload new document")
 uploaded_file = st.sidebar.file_uploader("Upload PDF or TXT", type=["pdf", "txt"])
 if uploaded_file:
     with st.spinner("Processing uploaded file..."):
-        # Save to temp file
+
         suffix = ".pdf" if uploaded_file.type == "application/pdf" else ".txt"
         with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp_file:
             tmp_file.write(uploaded_file.read())
             tmp_path = tmp_file.name
-        # Extract text
         if suffix == ".pdf":
             new_text = extract_text_from_pdf(tmp_path)
         else:
             new_text = extract_text_from_txt(tmp_path)
-        # Embed and create a new vectorstore for this session
-        embedding = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+
+        # Set device explicitly to avoid meta tensor issues
+        embedding = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2", model_kwargs={'device': 'cpu'})
         if st.session_state.custom_vectorstore is None:
             base_retriever = load_faiss_retriever()
             base_docs = [doc.page_content for doc in base_retriever.get_relevant_documents("")]
             st.session_state.custom_vectorstore = FAISS.from_texts(base_docs, embedding=embedding)
         st.session_state.custom_vectorstore.add_texts([new_text])
-        # Track uploaded doc name
         st.session_state.uploaded_docs.append(uploaded_file.name)
         st.success("Document uploaded and added to knowledge base!")
         os.unlink(tmp_path)
@@ -114,7 +113,7 @@ down_count = sum(1 for v in st.session_state.feedback.values() if v == "down")
 st.sidebar.markdown(f"**Feedback:** 👍 {up_count} &nbsp;&nbsp; 👎 {down_count}")
 
 languages = [
-    "English", "Hindi", "Bengali", "Telugu", "Marathi", "Tamil", "Urdu", "Gujarati", "Kannada", "Odia", "Malayalam", "Punjabi", "French", "Spanish", "German", "Chinese", "Japanese", "Arabic",
+    "English", "Hindi", "French", "Spanish", "Bengali", "Telugu", "Marathi", "German", "Chinese", "Tamil", "Urdu", "Gujarati", "Kannada", "Odia", "Malayalam", "Punjabi", "Japanese", "Arabic",
     "Assamese", "Maithili", "Santali", "Kashmiri", "Nepali", "Konkani", "Sindhi", "Dogri", "Manipuri", "Bodo", "Sanskrit"
 ]
 st.session_state.language = st.sidebar.selectbox("🌐 Language", languages, index=languages.index(st.session_state.language) if st.session_state.language in languages else 0)
@@ -529,7 +528,7 @@ if mic_result:
 # ------------------------ INPUT FORM ------------------------ #
 with st.form(key="chat_form", clear_on_submit=True):
     input_col, button_col = st.columns([8, 1])
-    user_input = input_col.text_input("", placeholder="Ask your loan-related question here...", label_visibility="collapsed", key="text_input")
+    user_input = input_col.text_input("Question", placeholder="Ask your loan-related question here...", label_visibility="collapsed", key="text_input")
     submitted = button_col.form_submit_button("➤")
 
 # ------------------------ HANDLE SUBMIT ------------------------ #
@@ -542,27 +541,9 @@ def custom_retrieve_top_k(query, k=5):
 
 if submitted and user_input:
     st.session_state.bot_typing = True
-    st.session_state.chat_history.append((user_input, "..."))  # Temporary
-    st.session_state.context_history.append([])  # Placeholder for context
+    st.session_state.chat_history.append((user_input, "..."))
+    st.session_state.context_history.append([])
     st.rerun()
-
-# # ------------------------ GENERATE RESPONSE ------------------------ #
-# if st.session_state.bot_typing:
-#     time.sleep(1.0)
-#     with st.spinner("Generating answer..."):
-#         context = custom_retrieve_top_k(user_input, k=5)
-#         llm = get_gemini_llm()
-#         chat_hist = st.session_state.chat_history[-4:] if len(st.session_state.chat_history) > 1 else []
-#         raw_answer = generate_answer(llm, user_input, context, chat_history=chat_hist, language=st.session_state.language)
-#         final_answer = raw_answer.strip()
-#         if not final_answer or "i don't know" in final_answer.lower():
-#             final_answer = "I'm not sure based on that input. Could you try rephrasing your question or give more details?"
-#     st.session_state.chat_history[-1] = (user_input, final_answer)
-#     st.session_state.context_history[-1] = context
-#     st.session_state.memory.save_context({"input": user_input}, {"output": final_answer})
-#     st.session_state.bot_typing = False
-#     st.rerun()
-
 
 if st.session_state.bot_typing:
     time.sleep(1.0)
@@ -571,7 +552,7 @@ if st.session_state.bot_typing:
         llm = get_gemini_llm()
         chat_hist = st.session_state.chat_history[-4:] if len(st.session_state.chat_history) > 1 else []
         
-        answer = generate_answer(llm=llm, query=user_input, context_docs=context, history=chat_hist)
+        answer = generate_answer(llm=llm, question=user_input, context=context, chat_history=chat_hist, language=st.session_state.language)
         final_answer = answer.strip() if answer else "I'm not sure based on that input. Could you try rephrasing your question or give more details?"
 
     st.session_state.chat_history[-1] = (user_input, final_answer)
