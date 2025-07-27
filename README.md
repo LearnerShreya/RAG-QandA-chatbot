@@ -2,7 +2,7 @@
 
 An intelligent RAG-powered chatbot for loan-related queries, built with Streamlit, FAISS, and Google's Gemini LLM.
 
-## Live Demo: [Smart Loan Q&A Chatbot](https://rag.streamlit.app/)
+## Live Demo: [Smart Loan Q&A Chatbot](https://loan-lattice.streamlit.app/)
 
 ## Features
 
