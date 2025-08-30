@@ -1,4 +1,4 @@
-# Smart Loan Q&A Chatbot
+# RAG-QandA-chatbot for Loan
 
 An intelligent RAG-powered chatbot for loan-related queries, built with Streamlit, FAISS, and Google's Gemini LLM.
 
